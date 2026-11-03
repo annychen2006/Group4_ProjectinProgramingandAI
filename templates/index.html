@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Social Battery</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; margin: 0; background: #f5f7fb; color: #182033; }
+    main { max-width: 760px; margin: 3rem auto; padding: 0 1.25rem; }
+    h1 { margin-bottom: .25rem; }
+    .intro { color: #526078; margin-top: 0; }
+    form, .card { background: white; border: 1px solid #dce2ed; border-radius: 12px; padding: 1.25rem; margin: 1.25rem 0; }
+    label { display: block; font-weight: 600; margin-bottom: .5rem; }
+    select, button { font: inherit; padding: .6rem .8rem; border-radius: 8px; }
+    select { border: 1px solid #9ca9be; min-width: 12rem; }
+    button { border: 0; background: #3159b7; color: white; cursor: pointer; margin-left: .5rem; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; }
+    .metric { background: #edf2ff; border-radius: 10px; padding: 1rem; }
+    .metric strong { display: block; font-size: 1.8rem; }
+    .metric span, .note { color: #526078; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Social Battery</h1>
+    <p class="intro">A live summary of social interactions and recorded fatigue.</p>
+    {% if people %}
+      <form method="get" action="/">
+        <label for="user_id">Choose a person</label>
+        <select id="user_id" name="user_id">
+          {% for person in people %}
+            <option value="{{ person.id }}" {% if selected_person and person.id == selected_person.id %}selected{% endif %}>{{ person.name }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Show summary</button>
+      </form>
+      {% if selected_person and summary %}
+        <section class="card" aria-label="Summary for {{ selected_person.name }}">
+          <h2>{{ selected_person.name }}</h2>
+          <div class="metrics">
+            <div class="metric"><strong>{{ summary.interaction_count }}</strong><span>interactions</span></div>
+            <div class="metric"><strong>{{ summary.total_duration_min }}</strong><span>total minutes</span></div>
+            <div class="metric"><strong>{{ summary.average_fatigue if summary.average_fatigue is not none else '—' }}</strong><span>average fatigue (1–10)</span></div>
+          </div>
+          <p class="note">Average fatigue is based on {{ summary.fatigue_days }} recorded day{{ '' if summary.fatigue_days == 1 else 's' }}. It is a descriptive average, not a prediction.</p>
+        </section>
+      {% endif %}
+    {% else %}
+      <p>No people are loaded in the database yet.</p>
+    {% endif %}
+  </main>
+</body>
+</html>
