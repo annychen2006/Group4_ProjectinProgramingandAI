@@ -9,6 +9,10 @@ A small Flask page that reads the team's existing Railway Postgres data. Choose 
 3. Create an ignored `.env` file with `DATABASE_URL=<Railway DATABASE_PUBLIC_URL>`.
 4. Run `python app.py` and open `http://127.0.0.1:5000`.
 
+## Load the sample data
+
+The team's sample logs are in `data/interactions.csv` and `data/daily_fatigue.csv`. With `DATABASE_URL` set, run `python seed.py` to load them. It creates the tables from `schema.sql` if needed and only adds rows the database doesn't already have, so it is safe to run again. Interaction types are stored in title case, so "group work" and "Group Work" become one type.
+
 Do not commit `.env` or paste the database URL into source code. The app expects the schema's `users`, `interactions`, and `daily_fatigue` tables. The selected person is passed as `user_id` in the page URL; SQL parameters keep it separate from query text.
 
 ## Deploy on Railway
