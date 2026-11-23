@@ -20,3 +20,9 @@ Do not commit `.env` or paste the database URL into source code. The app expects
 Add this GitHub repository as a new service **inside the Railway project that already contains Postgres**. In the app service's Variables, set `DATABASE_URL` to `${{Postgres.DATABASE_URL}}` (use the database service's actual name if different). Railway will build the Dockerfile. In the app service's networking settings, generate a public domain and open that domain to verify the page.
 
 The app service's public URL is the assignment deliverable; the Postgres public URL is a database connection string and should not be submitted.
+
+## Decision tree: clinic no-shows
+
+`analysis/decision_tree.py` answers the clinic overbooking assignment using `data/clinic_appointments.csv` (400 appointments). It does a stratified 70/30 train/test split (seed 42), fits a depth-3 classification tree, compares it with the hold-every-slot baseline on the test appointments, applies the overbook/hold rule to appointments D and E, and values both policies with the assignment's cost table.
+
+Run `pip install -r analysis/requirements.txt`, then `python analysis/decision_tree.py`. It writes `analysis/decision_tree_report.md` (every number), `analysis/decision_tree_results.json` and `analysis/decision_tree.png` (the tree). The per-year figure assumes 10,000 appointments a year; change `APPOINTMENTS_PER_YEAR` to use another volume.

@@ -1,0 +1,151 @@
+{
+  "n": 400,
+  "n_train": 280,
+  "n_test": 120,
+  "no_shows": 91,
+  "no_show_rate": 0.2275,
+  "no_shows_train": 64,
+  "no_show_rate_train": 0.22857142857142856,
+  "no_shows_test": 27,
+  "no_show_rate_test": 0.225,
+  "seed": 42,
+  "features_offered": [
+    "lead_time_days",
+    "prior_no_shows",
+    "age",
+    "distance_miles",
+    "sms_reminder",
+    "new_patient",
+    "appointment_hour"
+  ],
+  "max_depth": 3,
+  "min_samples_leaf": 10,
+  "leaves": 5,
+  "cv_accuracy_by_depth": {
+    "1": 0.7821428571428571,
+    "2": 0.8071428571428572,
+    "3": 0.7928571428571429,
+    "4": 0.8,
+    "5": 0.8142857142857143,
+    "6": 0.825
+  },
+  "root_split": "prior_no_shows <= 2.5",
+  "features_split_on": {
+    "prior_no_shows": 0.626679836889922,
+    "sms_reminder": 0.302194297430613,
+    "age": 0.07112586567946509
+  },
+  "tree_rules": "|--- prior_no_shows <= 2.50\n|   |--- sms_reminder <= 0.50\n|   |   |--- prior_no_shows <= 0.50\n|   |   |   |--- weights: [46.00, 10.00] class: 0\n|   |   |--- prior_no_shows >  0.50\n|   |   |   |--- weights: [23.00, 29.00] class: 1\n|   |--- sms_reminder >  0.50\n|   |   |--- age <= 18.50\n|   |   |   |--- weights: [9.00, 5.00] class: 0\n|   |   |--- age >  18.50\n|   |   |   |--- weights: [136.00, 5.00] class: 0\n|--- prior_no_shows >  2.50\n|   |--- weights: [2.00, 15.00] class: 1\n",
+  "value_table": {
+    "TN": 0,
+    "FP": -60,
+    "FN": -120,
+    "TP": 0
+  },
+  "appointments_per_year_assumed": 10000,
+  "baseline": {
+    "train": {
+      "TN": 216,
+      "FP": 0,
+      "FN": 64,
+      "TP": 0,
+      "n": 280,
+      "accuracy": 0.7714285714285715,
+      "precision": null,
+      "recall": 0.0,
+      "value_total": -7680,
+      "value_per_appointment": -27.428571428571427,
+      "value_per_year": -274285.71428571426
+    },
+    "test": {
+      "TN": 93,
+      "FP": 0,
+      "FN": 27,
+      "TP": 0,
+      "n": 120,
+      "accuracy": 0.775,
+      "precision": null,
+      "recall": 0.0,
+      "value_total": -3240,
+      "value_per_appointment": -27.0,
+      "value_per_year": -270000.0
+    }
+  },
+  "v1": {
+    "train": {
+      "TN": 191,
+      "FP": 25,
+      "FN": 20,
+      "TP": 44,
+      "n": 280,
+      "accuracy": 0.8392857142857143,
+      "precision": 0.6376811594202898,
+      "recall": 0.6875,
+      "value_total": -3900,
+      "value_per_appointment": -13.928571428571429,
+      "value_per_year": -139285.7142857143
+    },
+    "test": {
+      "TN": 86,
+      "FP": 7,
+      "FN": 7,
+      "TP": 20,
+      "n": 120,
+      "accuracy": 0.8833333333333333,
+      "precision": 0.7407407407407407,
+      "recall": 0.7407407407407407,
+      "value_total": -1260,
+      "value_per_appointment": -10.5,
+      "value_per_year": -105000.0
+    }
+  },
+  "upcoming": {
+    "D": {
+      "appointment": {
+        "lead_time_days": 21,
+        "prior_no_shows": 1,
+        "age": 27,
+        "distance_miles": 9.5,
+        "sms_reminder": 0,
+        "new_patient": 1,
+        "appointment_hour": 15
+      },
+      "decision": "overbook",
+      "leaf_id": 4,
+      "path": [
+        "prior_no_shows <= 2.5",
+        "sms_reminder <= 0.5",
+        "prior_no_shows > 0.5"
+      ],
+      "train_n": 52,
+      "train_no_shows": 29,
+      "train_no_show_rate": 0.5576923076923077
+    },
+    "E": {
+      "appointment": {
+        "lead_time_days": 3,
+        "prior_no_shows": 0,
+        "age": 61,
+        "distance_miles": 2.0,
+        "sms_reminder": 1,
+        "new_patient": 0,
+        "appointment_hour": 9
+      },
+      "decision": "hold",
+      "leaf_id": 7,
+      "path": [
+        "prior_no_shows <= 2.5",
+        "sms_reminder > 0.5",
+        "age > 18.5"
+      ],
+      "train_n": 141,
+      "train_no_shows": 5,
+      "train_no_show_rate": 0.03546099290780142
+    }
+  },
+  "v1_minus_baseline_test": {
+    "value_total": 1980,
+    "value_per_appointment": 16.5,
+    "value_per_year": 165000.0
+  }
+}
