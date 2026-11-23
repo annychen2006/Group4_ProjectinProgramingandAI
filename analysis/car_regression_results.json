@@ -1,0 +1,138 @@
+{
+  "n_cars": 240,
+  "n_train": 168,
+  "n_test": 72,
+  "seed": 42,
+  "n_auction_lots": 40,
+  "prep_cost": 1500,
+  "accident_yes": 56,
+  "full_model": {
+    "formula": "Sale_Price ~ Mileage_K + Age_Years + Horsepower + C(Accident) + Num_Owners",
+    "r2": 0.8729749009547605,
+    "adj_r2": 0.8690543732064506,
+    "coefficients": {
+      "Intercept": {
+        "coef": 21698.629232027306,
+        "p_value": 3.128073034412038e-45
+      },
+      "C(Accident)[T.yes]": {
+        "coef": -2171.7835278660923,
+        "p_value": 3.665156801580893e-05
+      },
+      "Mileage_K": {
+        "coef": -78.59275076638366,
+        "p_value": 6.62749551632339e-08
+      },
+      "Age_Years": {
+        "coef": -1300.6403680821943,
+        "p_value": 5.5355180645849393e-11
+      },
+      "Horsepower": {
+        "coef": 75.01582149713172,
+        "p_value": 1.243319355427348e-34
+      },
+      "Num_Owners": {
+        "coef": 62.924805547655524,
+        "p_value": 0.8653458920026919
+      }
+    }
+  },
+  "v1": {
+    "formula": "Sale_Price ~ Mileage_K + Age_Years + Horsepower + C(Accident)",
+    "dropped": "Num_Owners",
+    "r2": 0.8729522822665665,
+    "adj_r2": 0.8698345468620651,
+    "residual_std_error": 2641.3024033018746,
+    "coefficients": {
+      "Intercept": {
+        "coef": 21762.3980331204,
+        "p_value": 7.353145665452355e-49
+      },
+      "C(Accident)[T.yes]": {
+        "coef": -2176.637724947504,
+        "p_value": 3.2531415155576255e-05
+      },
+      "Mileage_K": {
+        "coef": -78.15329223996497,
+        "p_value": 4.316370372661752e-08
+      },
+      "Age_Years": {
+        "coef": -1291.631057414409,
+        "p_value": 1.158572566405091e-11
+      },
+      "Horsepower": {
+        "coef": 75.02035253308593,
+        "p_value": 7.785570120822746e-35
+      }
+    }
+  },
+  "baseline_price": 25851.190476190477,
+  "fit": {
+    "baseline": {
+      "r2": -0.013677853506103954,
+      "rmse": 6494.153971747817
+    },
+    "v1": {
+      "r2": 0.8226790130498031,
+      "rmse": 2716.143256382655
+    },
+    "v1_train": {
+      "r2": 0.8729522822665665,
+      "rmse": 2601.700424799119
+    }
+  },
+  "auction": {
+    "baseline": {
+      "cars_bought": 14,
+      "money_losing": 10,
+      "total_profit": -6000,
+      "profit_per_car_bought": -428.57142857142856,
+      "lots_bought": [
+        1,
+        5,
+        8,
+        10,
+        16,
+        20,
+        22,
+        24,
+        25,
+        27,
+        30,
+        32,
+        36,
+        37
+      ]
+    },
+    "v1": {
+      "cars_bought": 17,
+      "money_losing": 6,
+      "total_profit": 15800,
+      "profit_per_car_bought": 929.4117647058823,
+      "lots_bought": [
+        5,
+        8,
+        12,
+        14,
+        16,
+        18,
+        19,
+        20,
+        22,
+        25,
+        26,
+        27,
+        28,
+        31,
+        32,
+        37,
+        39
+      ]
+    },
+    "buy_every_car": {
+      "cars_bought": 40,
+      "money_losing": 27,
+      "total_profit": -35500
+    }
+  }
+}
