@@ -6,16 +6,16 @@
 - `interactions.csv`: 38 interactions. `daily_fatigue.csv`: 8 person-days (the outcome).
 - 8 rows is under 30, so no 70/30 split: v1 is fit on all 8 rows. Leave-one-out (predict each day from the other 7) is reported as a check on new days.
 
-| Person | Date | Hours of interactions | Fatigue | v1 predicted | v1 decision |
-|---|---|---|---|---|---|
-| Taeyun | 2026-10-14 | 2.50 | 8 | 5.85 | stay quiet |
-| Anny | 2026-10-17 | 4.67 | 5 | 7.42 | nudge |
-| Taeyun | 2026-10-18 | 6.50 | 9 | 8.75 | nudge |
-| Anny | 2026-10-18 | 1.50 | 2 | 5.13 | stay quiet |
-| Bianca | 2026-10-18 | 3.25 | 8 | 6.40 | stay quiet |
-| Zaid | 2026-10-19 | 7.33 | 9 | 9.35 | nudge |
-| Anny | 2026-10-19 | 1.50 | 4 | 5.13 | stay quiet |
-| Bianca | 2026-10-19 | 2.67 | 9 | 5.97 | stay quiet |
+| Person | Date | Interactions | Social share | Academic share | Work share | Weekend | Fatigue | v1 predicted | v1 predicted, day left out | v1 decision |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Taeyun | 2026-10-14 | 3 | 0.000 | 0.104 | 0.000 | 0 | 8 | 7.55 | 6.02 | nudge |
+| Anny | 2026-10-17 | 4 | 0.069 | 0.125 | 0.000 | 1 | 5 | 5.48 | 6.41 | stay quiet |
+| Taeyun | 2026-10-18 | 2 | 0.271 | 0.000 | 0.000 | 1 | 9 | 9.01 | 120.03 | nudge |
+| Anny | 2026-10-18 | 2 | 0.062 | 0.000 | 0.000 | 1 | 2 | 1.47 | -0.20 | stay quiet |
+| Bianca | 2026-10-18 | 5 | 0.052 | 0.000 | 0.083 | 1 | 8 | 8.04 | 8.16 | nudge |
+| Zaid | 2026-10-19 | 12 | 0.080 | 0.226 | 0.000 | 0 | 9 | 8.82 | 4.27 | nudge |
+| Anny | 2026-10-19 | 4 | 0.014 | 0.042 | 0.000 | 0 | 4 | 4.68 | 5.43 | stay quiet |
+| Bianca | 2026-10-19 | 6 | 0.007 | 0.021 | 0.062 | 0 | 9 | 8.95 | 8.88 | nudge |
 
 ### Data dictionary (`fatigue_model_data.csv`)
 
@@ -24,54 +24,58 @@
 | `Name` | who logged the day |
 | `date` | the day (YYYY-MM-DD) |
 | `fatigue_score` | OUTCOME: self-rated fatigue that day, 1 = fully charged, 10 = drained |
-| `total_hours` | hours of logged interactions that day (v1's feature) |
 | `interaction_count` | number of interactions logged that day |
 | `social_day_share` | friend + family minutes / 1,440 |
-| `academic_day_share` | lecture + study + group work + teacher minutes / 1,440 |
+| `academic_day_share` | lecture + study + group work + teacher minutes / 1,440 (class discussion left out) |
 | `work_day_share` | work meeting minutes / 1,440 |
 | `weekend_indicator` | 1 = Saturday or Sunday, 0 = weekday |
-| `predicted_v1` | v1's predicted fatigue |
+| `total_hours` | hours of logged interactions that day (used only by the alternative model) |
+| `predicted_v1` | v1's predicted fatigue, fit on all 8 days |
+| `predicted_v1_held_out` | v1's predicted fatigue when this day is left out of the fit |
 | `nudge_v1` | v1's decision: nudge if predicted fatigue >= 7 |
 
-## Choosing v1: the team spreadsheet's models vs total hours
+## Model v1: M5 Full model from the team spreadsheet
 
-M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; class discussion left out of the shares; weekend = Saturday/Sunday). Leave-one-out predicts each day from a model fit on the other 7, which shows how a model does on a day it has not seen.
+`fatigue_score ~ interaction_count + social_day_share + academic_day_share + work_day_share + weekend_indicator` (OLS)
 
-| Model | Features | Residual df | R² | Adjusted R² | Typical error, all days | Typical error, held-out days | Worst held-out miss |
-|---|---|---|---|---|---|---|---|
-| Baseline | average fatigue | 7 | 0.000 | 0.000 | 2.54 | 2.90 | 5.4 |
-| M1 Count only | interaction_count | 6 | 0.200 | 0.066 | 2.27 | 3.00 | 4.8 |
-| M2 Time shares only | social_day_share, academic_day_share, work_day_share | 4 | 0.595 | 0.291 | 1.61 | 6.03 | 15.4 |
-| M3 Calendar only | weekend_indicator | 6 | 0.087 | -0.065 | 2.42 | 3.23 | 5.3 |
-| M4 Interaction features | interaction_count, social_day_share, academic_day_share, work_day_share | 3 | 0.600 | 0.066 | 1.61 | 6.46 | 15.5 |
-| M5 Full model | interaction_count, social_day_share, academic_day_share, work_day_share, weekend_indicator | 2 | 0.976 | 0.918 | 0.39 | 39.31 | 111.0 |
-| v1 Total hours | total_hours | 6 | 0.350 | 0.242 | 2.05 | 2.56 | 4.3 |
+| Term | Coefficient | p-value | In plain words (other features held equal) |
+|---|---|---|---|
+| Intercept | 5.415 | 0.019 | starting point |
+| interaction_count | -0.746 | 0.080 | each extra interaction: -0.75 points |
+| social_day_share | 36.183 | 0.018 | each hour with friends/family: +1.51 points |
+| academic_day_share | 41.986 | 0.045 | each hour of class/study: +1.75 points |
+| work_day_share | 110.193 | 0.021 | each hour of work meetings: +4.59 points |
+| weekend_indicator | -4.711 | 0.030 | a weekend day: -4.71 points |
 
-M5 Full model has the highest adjusted R² (0.918), but with 6 numbers fit to 8 days it misses held-out days by 39.3 points on average on a 1-10 scale. Every spreadsheet model does worse than the baseline on held-out days. Total hours is the only candidate that beats the baseline there, so it is v1.
-
-![model comparison](fatigue_model_comparison.png)
-
-## Model v1
-
-`fatigue_score ~ total_hours` (OLS)
-
-| Term | Coefficient | p-value |
-|---|---|---|
-| Intercept | 4.040 | 0.057 |
-| total_hours | 0.725 | 0.122 |
-
-R² 0.350, adjusted R² 0.242. Each extra hour of interactions adds 0.72 fatigue points. v1 predicts a tired day (7+) once a day reaches 4.1 hours of interactions.
+R² 0.976, adjusted R² 0.918 (F-test p = 0.058), with 2 residual degrees of freedom: 6 numbers fit to 8 days. A day share is minutes / 1,440, so a share coefficient / 24 is the effect of one hour.
 
 ## Fit, baseline vs v1
 
 | | R² | Typical error (RMSE, fatigue points) |
 |---|---|---|
 | Baseline (average 6.75), all 8 days | 0.000 | 2.54 |
-| v1, all 8 days | 0.350 | 2.05 |
+| v1, all 8 days | 0.976 | 0.39 |
 | Baseline, leave-one-out | -0.306 | 2.90 |
-| v1, leave-one-out | -0.022 | 2.56 |
+| v1, leave-one-out | -239.060 | 39.31 |
 
-![chart](fatigue_model_chart.png)
+![predicted vs actual](fatigue_model_chart.png)
+
+On all 8 days v1 is nearly exact, but that is expected with 6 numbers fit to 8 days. With a day left out, its predictions swing far off the 1-10 scale (worst: 111 points off), so its predicted numbers should not be shown to users. Its nudge decisions hold up better (see below), because a decision only depends on which side of 7 the prediction falls.
+
+### All candidate models
+
+M1-M5 reproduce `daily_fatigue_regression.xlsx`; total hours is a one-feature alternative.
+
+| Model | Residual df | R² | Adjusted R² | Typical error, all days | Typical error, held-out days | Tired days caught, held-out | False alarms, held-out |
+|---|---|---|---|---|---|---|---|
+| M1 Count only | 6 | 0.200 | 0.066 | 2.27 | 3.00 | 1 of 5 | 0 |
+| M2 Time shares only | 4 | 0.595 | 0.291 | 1.61 | 6.03 | 2 of 5 | 1 |
+| M3 Calendar only | 6 | 0.087 | -0.065 | 2.42 | 3.23 | 3 of 5 | 2 |
+| M4 Interaction features | 3 | 0.600 | 0.066 | 1.61 | 6.46 | 2 of 5 | 1 |
+| M5 Full model (v1) | 2 | 0.976 | 0.918 | 0.39 | 39.31 | 3 of 5 | 0 |
+| Total hours (alternative) | 6 | 0.350 | 0.242 | 2.05 | 2.56 | 2 of 5 | 1 |
+
+![model comparison](fatigue_model_comparison.png)
 
 ## Decision and value
 
@@ -81,12 +85,13 @@ Value per user-day (ASSUMED): nudge on a tired day $0.50, nudge on a fine day -$
 
 | Rule | Nudges | Tired days caught | False alarms | Tired days missed | Value, 8 days | Per user-day | Per year |
 |---|---|---|---|---|---|---|---|
-| Baseline | 0 | 0 | 0 | 5 | -$2.50 | -$0.31 | -$114,062 |
-| v1 | 3 | 2 | 1 | 3 | -$0.70 | -$0.09 | -$31,938 |
-| v1, leave-one-out | 3 | 2 | 1 | 3 | -$0.70 | -$0.09 | -$31,938 |
+| Baseline (never nudge) | 0 | 0 | 0 | 5 | -$2.50 | -$0.31 | -$114,062 |
+| v1, fit on all 8 days | 5 | 5 | 0 | 0 | $2.50 | $0.31 | $114,062 |
+| v1, each day left out | 3 | 3 | 0 | 2 | $0.50 | $0.06 | $22,812 |
 
-The leave-one-out row predicts each day from a model fit on the other 7. It makes the same nudge decision as v1 on every day, so the value is the same.
+v1 vs baseline per year: $228,125 better on the days it was fit on, $136,875 better when each day is predicted without seeing it. The second is the more honest figure.
 
 ## New input
 
-weekday: 2 h lecture, 1.5 h study, 1 h group work, 1.5 h with friends = 6.0 hours. v1 predicts fatigue 8.39: **nudge**. Baseline: stay quiet.
+weekday: 2 h lecture, 1.5 h study, 1 h group work, 1.5 h with friends: 4 interactions, social share 0.062, academic share 0.188, work share 0.000, weekend 0. v1 predicts fatigue 12.6: **nudge**. Baseline: stay quiet.
+The predicted score is outside the 1-10 scale, another sign that v1's numbers are unstable; the decision only uses whether it is 7 or more.

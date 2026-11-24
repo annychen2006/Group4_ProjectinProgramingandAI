@@ -12,23 +12,46 @@
   ],
   "interactions_logged": 38,
   "split": "none: 8 rows < 30, v1 fit on all rows (leave-one-out used as a held-out check)",
-  "formula": "fatigue_score ~ total_hours",
+  "v1": "M5 Full model",
+  "formula": "fatigue_score ~ interaction_count + social_day_share + academic_day_share + work_day_share + weekend_indicator",
   "coefficients": {
     "Intercept": {
-      "coef": 4.039924194567277,
-      "p_value": 0.05742083683930536
+      "coef": 5.414538442689083,
+      "p_value": 0.01927935086001539
     },
-    "total_hours": {
-      "coef": 0.7246999368288061,
-      "p_value": 0.12216558232711974
+    "interaction_count": {
+      "coef": -0.7464968661873007,
+      "p_value": 0.07980592161107834
+    },
+    "social_day_share": {
+      "coef": 36.1834422796945,
+      "p_value": 0.018140859219114423
+    },
+    "academic_day_share": {
+      "coef": 41.98618702221492,
+      "p_value": 0.04538755192534844
+    },
+    "work_day_share": {
+      "coef": 110.1927883860732,
+      "p_value": 0.021423983500257288
+    },
+    "weekend_indicator": {
+      "coef": -4.71078525319275,
+      "p_value": 0.02979996082608038
     }
   },
-  "r2": 0.35033026881489593,
-  "adj_r2": 0.24205198028404518,
+  "r2": 0.976495814930971,
+  "adj_r2": 0.9177353522583986,
+  "f_test_p": 0.05772869484027027,
+  "residual_df": 2,
+  "per_hour": {
+    "social_day_share": 1.5076434283206044,
+    "academic_day_share": 1.749424459258955,
+    "work_day_share": 4.59136618275305
+  },
   "average_fatigue": 6.75,
   "tired_at": 7,
   "tired_days": 5,
-  "nudge_when_hours_at_least": 4.08455369595537,
   "candidate_models": {
     "M1 Count only": {
       "features": "interaction_count",
@@ -40,6 +63,16 @@
       "rmse_all_days": 2.269660887493479,
       "rmse_leave_one_out": 2.998805299747078,
       "worst_leave_one_out_miss": 4.819383259911896,
+      "decisions_leave_one_out": {
+        "hit": 1,
+        "false_alarm": 0,
+        "miss": 4,
+        "quiet_ok": 3,
+        "nudges": 1,
+        "value_total": -1.5,
+        "value_per_user_day": -0.1875,
+        "value_per_year": -68437.5
+      },
       "coefficients": {
         "Intercept": {
           "coef": 4.972789115646256,
@@ -61,6 +94,16 @@
       "rmse_all_days": 1.6147521099728226,
       "rmse_leave_one_out": 6.031972224062768,
       "worst_leave_one_out_miss": 15.447657397332131,
+      "decisions_leave_one_out": {
+        "hit": 2,
+        "false_alarm": 1,
+        "miss": 3,
+        "quiet_ok": 2,
+        "nudges": 3,
+        "value_total": -0.7,
+        "value_per_user_day": -0.0875,
+        "value_per_year": -31937.5
+      },
       "coefficients": {
         "Intercept": {
           "coef": 2.930098607352419,
@@ -90,6 +133,16 @@
       "rmse_all_days": 2.4238399287081647,
       "rmse_leave_one_out": 3.2317865716108853,
       "worst_leave_one_out_miss": 5.333333333333332,
+      "decisions_leave_one_out": {
+        "hit": 3,
+        "false_alarm": 2,
+        "miss": 2,
+        "quiet_ok": 1,
+        "nudges": 5,
+        "value_total": 0.10000000000000009,
+        "value_per_user_day": 0.012500000000000011,
+        "value_per_year": 4562.500000000004
+      },
       "coefficients": {
         "Intercept": {
           "coef": 7.499999999999997,
@@ -111,6 +164,16 @@
       "rmse_all_days": 1.6053443791715787,
       "rmse_leave_one_out": 6.460559862543086,
       "worst_leave_one_out_miss": 15.46709771644024,
+      "decisions_leave_one_out": {
+        "hit": 2,
+        "false_alarm": 1,
+        "miss": 3,
+        "quiet_ok": 2,
+        "nudges": 3,
+        "value_total": -0.7,
+        "value_per_user_day": -0.0875,
+        "value_per_year": -31937.5
+      },
       "coefficients": {
         "Intercept": {
           "coef": 3.033327710023043,
@@ -144,6 +207,16 @@
       "rmse_all_days": 0.3889835361321525,
       "rmse_leave_one_out": 39.311440564303886,
       "worst_leave_one_out_miss": 111.03114959876928,
+      "decisions_leave_one_out": {
+        "hit": 3,
+        "false_alarm": 0,
+        "miss": 2,
+        "quiet_ok": 3,
+        "nudges": 3,
+        "value_total": 0.5,
+        "value_per_user_day": 0.0625,
+        "value_per_year": 22812.5
+      },
       "coefficients": {
         "Intercept": {
           "coef": 5.414538442689083,
@@ -171,7 +244,7 @@
         }
       }
     },
-    "v1 Total hours": {
+    "Total hours (alternative)": {
       "features": "total_hours",
       "parameters": 2,
       "residual_df": 6,
@@ -181,6 +254,16 @@
       "rmse_all_days": 2.0450547411998796,
       "rmse_leave_one_out": 2.5645528891773077,
       "worst_leave_one_out_miss": 4.289428076256502,
+      "decisions_leave_one_out": {
+        "hit": 2,
+        "false_alarm": 1,
+        "miss": 3,
+        "quiet_ok": 2,
+        "nudges": 3,
+        "value_total": -0.7,
+        "value_per_user_day": -0.0875,
+        "value_per_year": -31937.5
+      },
       "coefficients": {
         "Intercept": {
           "coef": 4.039924194567277,
@@ -199,16 +282,16 @@
       "rmse": 2.537222891273055
     },
     "v1_all_days": {
-      "r2": 0.35033026881489604,
-      "rmse": 2.0450547411998796
+      "r2": 0.976495814930971,
+      "rmse": 0.3889835361321525
     },
     "baseline_leave_one_out": {
       "r2": -0.30612244897959173,
       "rmse": 2.8996833043120627
     },
     "v1_leave_one_out": {
-      "r2": -0.021659265458279897,
-      "rmse": 2.5645528891773077
+      "r2": -239.06048298886168,
+      "rmse": 39.311440564303886
     }
   },
   "value_assumptions": {
@@ -230,28 +313,29 @@
       "value_per_year": -114062.5
     },
     "v1": {
-      "hit": 2,
-      "false_alarm": 1,
-      "miss": 3,
-      "quiet_ok": 2,
-      "nudges": 3,
-      "value_total": -0.7,
-      "value_per_user_day": -0.0875,
-      "value_per_year": -31937.5
+      "hit": 5,
+      "false_alarm": 0,
+      "miss": 0,
+      "quiet_ok": 3,
+      "nudges": 5,
+      "value_total": 2.5,
+      "value_per_user_day": 0.3125,
+      "value_per_year": 114062.5
     },
     "v1_leave_one_out": {
-      "hit": 2,
-      "false_alarm": 1,
-      "miss": 3,
-      "quiet_ok": 2,
+      "hit": 3,
+      "false_alarm": 0,
+      "miss": 2,
+      "quiet_ok": 3,
       "nudges": 3,
-      "value_total": -0.7,
-      "value_per_user_day": -0.0875,
-      "value_per_year": -31937.5
+      "value_total": 0.5,
+      "value_per_user_day": 0.0625,
+      "value_per_year": 22812.5
     }
   },
   "new_day": {
     "description": "weekday: 2 h lecture, 1.5 h study, 1 h group work, 1.5 h with friends",
+    "weekend": false,
     "interactions": [
       [
         "lecture",
@@ -270,8 +354,14 @@
         90
       ]
     ],
-    "total_hours": 6.0,
-    "predicted_fatigue": 8.388123815540114,
+    "features": {
+      "interaction_count": 4,
+      "social_day_share": 0.0625,
+      "academic_day_share": 0.1875,
+      "work_day_share": 0.0,
+      "weekend_indicator": 0
+    },
+    "predicted_fatigue": 12.562426187086086,
     "decision_v1": "nudge",
     "decision_baseline": "stay quiet"
   },
@@ -279,66 +369,114 @@
     {
       "Name": "Taeyun",
       "date": "2026-10-14",
-      "total_hours": 2.5,
       "fatigue_score": 8,
-      "predicted_v1": 5.85,
-      "nudge_v1": "stay quiet"
+      "total_hours": 2.5,
+      "interaction_count": 3,
+      "social_day_share": 0.0,
+      "academic_day_share": 0.104,
+      "work_day_share": 0.0,
+      "weekend_indicator": 0,
+      "predicted_v1": 7.549,
+      "predicted_v1_held_out": 6.016,
+      "nudge_v1": "nudge"
     },
     {
       "Name": "Anny",
       "date": "2026-10-17",
-      "total_hours": 4.67,
       "fatigue_score": 5,
-      "predicted_v1": 7.42,
-      "nudge_v1": "nudge"
+      "total_hours": 4.667,
+      "interaction_count": 4,
+      "social_day_share": 0.069,
+      "academic_day_share": 0.125,
+      "work_day_share": 0.0,
+      "weekend_indicator": 1,
+      "predicted_v1": 5.479,
+      "predicted_v1_held_out": 6.406,
+      "nudge_v1": "stay quiet"
     },
     {
       "Name": "Taeyun",
       "date": "2026-10-18",
-      "total_hours": 6.5,
       "fatigue_score": 9,
-      "predicted_v1": 8.75,
+      "total_hours": 6.5,
+      "interaction_count": 2,
+      "social_day_share": 0.271,
+      "academic_day_share": 0.0,
+      "work_day_share": 0.0,
+      "weekend_indicator": 1,
+      "predicted_v1": 9.01,
+      "predicted_v1_held_out": 120.031,
       "nudge_v1": "nudge"
     },
     {
       "Name": "Anny",
       "date": "2026-10-18",
-      "total_hours": 1.5,
       "fatigue_score": 2,
-      "predicted_v1": 5.13,
+      "total_hours": 1.5,
+      "interaction_count": 2,
+      "social_day_share": 0.062,
+      "academic_day_share": 0.0,
+      "work_day_share": 0.0,
+      "weekend_indicator": 1,
+      "predicted_v1": 1.472,
+      "predicted_v1_held_out": -0.195,
       "nudge_v1": "stay quiet"
     },
     {
       "Name": "Bianca",
       "date": "2026-10-18",
-      "total_hours": 3.25,
       "fatigue_score": 8,
-      "predicted_v1": 6.4,
-      "nudge_v1": "stay quiet"
+      "total_hours": 3.25,
+      "interaction_count": 5,
+      "social_day_share": 0.052,
+      "academic_day_share": 0.0,
+      "work_day_share": 0.083,
+      "weekend_indicator": 1,
+      "predicted_v1": 8.039,
+      "predicted_v1_held_out": 8.158,
+      "nudge_v1": "nudge"
     },
     {
       "Name": "Zaid",
       "date": "2026-10-19",
-      "total_hours": 7.33,
       "fatigue_score": 9,
-      "predicted_v1": 9.35,
+      "total_hours": 7.333,
+      "interaction_count": 12,
+      "social_day_share": 0.08,
+      "academic_day_share": 0.226,
+      "work_day_share": 0.0,
+      "weekend_indicator": 0,
+      "predicted_v1": 8.822,
+      "predicted_v1_held_out": 4.268,
       "nudge_v1": "nudge"
     },
     {
       "Name": "Anny",
       "date": "2026-10-19",
-      "total_hours": 1.5,
       "fatigue_score": 4,
-      "predicted_v1": 5.13,
+      "total_hours": 1.5,
+      "interaction_count": 4,
+      "social_day_share": 0.014,
+      "academic_day_share": 0.042,
+      "work_day_share": 0.0,
+      "weekend_indicator": 0,
+      "predicted_v1": 4.681,
+      "predicted_v1_held_out": 5.428,
       "nudge_v1": "stay quiet"
     },
     {
       "Name": "Bianca",
       "date": "2026-10-19",
-      "total_hours": 2.67,
       "fatigue_score": 9,
-      "predicted_v1": 5.97,
-      "nudge_v1": "stay quiet"
+      "total_hours": 2.667,
+      "interaction_count": 6,
+      "social_day_share": 0.007,
+      "academic_day_share": 0.021,
+      "work_day_share": 0.062,
+      "weekend_indicator": 0,
+      "predicted_v1": 8.949,
+      "predicted_v1_held_out": 8.881,
+      "nudge_v1": "nudge"
     }
   ]
 }
