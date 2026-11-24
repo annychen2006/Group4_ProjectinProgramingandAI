@@ -49,6 +49,12 @@
 
 R² 0.976, adjusted R² 0.918 (F-test p = 0.058), with 2 residual degrees of freedom: 6 numbers fit to 8 days. A day share is minutes / 1,440, so a share coefficient / 24 is the effect of one hour.
 
+As a spreadsheet formula (academic minutes leave out class discussion; the count includes it):
+
+```
+=5.414538-0.746497*InteractionCount +36.183442*(SocialMinutes/1440) +41.986187*(AcademicMinutes/1440) +110.192788*(WorkMinutes/1440)-4.710785*WeekendIndicator
+```
+
 ## Fit, baseline vs v1
 
 | | R² | Typical error (RMSE, fatigue points) |

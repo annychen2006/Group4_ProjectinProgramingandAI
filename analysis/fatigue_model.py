@@ -358,6 +358,15 @@ def main():
     L += ["", f"R² {v1.rsquared:.3f}, adjusted R² {v1.rsquared_adj:.3f} (F-test p = {v1.f_pvalue:.3f}), "
               f"with {int(v1.df_resid)} residual degrees of freedom: {len(v1.params)} numbers fit to {len(t)} days. "
               "A day share is minutes / 1,440, so a share coefficient / 24 is the effect of one hour.", "",
+          "As a spreadsheet formula (academic minutes leave out class discussion; the count includes it):", "",
+          "```",
+          f"={coefs['Intercept']['coef']:.6f}"
+          f"{coefs['interaction_count']['coef']:+.6f}*InteractionCount"
+          f" {coefs['social_day_share']['coef']:+.6f}*(SocialMinutes/1440)"
+          f" {coefs['academic_day_share']['coef']:+.6f}*(AcademicMinutes/1440)"
+          f" {coefs['work_day_share']['coef']:+.6f}*(WorkMinutes/1440)"
+          f"{coefs['weekend_indicator']['coef']:+.6f}*WeekendIndicator",
+          "```", "",
           "## Fit, baseline vs v1", "",
           "| | R² | Typical error (RMSE, fatigue points) |", "|---|---|---|",
           f"| Baseline (average {average:.2f}), all {len(t)} days | {fit['baseline_all_days']['r2']:.3f} | {fit['baseline_all_days']['rmse']:.2f} |",
