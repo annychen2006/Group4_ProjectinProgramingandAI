@@ -17,6 +17,22 @@
 | Anny | 2026-10-19 | 1.50 | 4 | 5.13 | stay quiet |
 | Bianca | 2026-10-19 | 2.67 | 9 | 5.97 | stay quiet |
 
+## Choosing v1: the team spreadsheet's models vs total hours
+
+M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; class discussion left out of the shares; weekend = Saturday/Sunday). Leave-one-out predicts each day from a model fit on the other 7, which shows how a model does on a day it has not seen.
+
+| Model | Features | Residual df | R² | Adjusted R² | Typical error, all days | Typical error, held-out days | Worst held-out miss |
+|---|---|---|---|---|---|---|---|
+| Baseline | average fatigue | 7 | 0.000 | 0.000 | 2.54 | 2.90 | 5.4 |
+| M1 Count only | interaction_count | 6 | 0.200 | 0.066 | 2.27 | 3.00 | 4.8 |
+| M2 Time shares only | social_day_share, academic_day_share, work_day_share | 4 | 0.595 | 0.291 | 1.61 | 6.03 | 15.4 |
+| M3 Calendar only | weekend_indicator | 6 | 0.087 | -0.065 | 2.42 | 3.23 | 5.3 |
+| M4 Interaction features | interaction_count, social_day_share, academic_day_share, work_day_share | 3 | 0.600 | 0.066 | 1.61 | 6.46 | 15.5 |
+| M5 Full model | interaction_count, social_day_share, academic_day_share, work_day_share, weekend_indicator | 2 | 0.976 | 0.918 | 0.39 | 39.31 | 111.0 |
+| v1 Total hours | total_hours | 6 | 0.350 | 0.242 | 2.05 | 2.56 | 4.3 |
+
+M5 Full model has the highest adjusted R² (0.918), but with 6 numbers fit to 8 days it misses held-out days by 39.3 points on average on a 1-10 scale. Every spreadsheet model does worse than the baseline on held-out days. Total hours is the only candidate that beats the baseline there, so it is v1.
+
 ## Model v1
 
 `fatigue_score ~ total_hours` (OLS)

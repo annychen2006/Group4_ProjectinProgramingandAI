@@ -60,13 +60,50 @@ NEW_DAY = {
 
 FORMULA = "fatigue_score ~ total_hours"
 
+# The team spreadsheet's candidate models (daily_fatigue_regression.xlsx), rebuilt
+# with its definitions: day share = minutes / 1,440; "class discussion" is not in
+# the category mapping, so its minutes are left out of the shares; weekend = Sat/Sun.
+SHEET_CATEGORIES = {
+    "group work": "academic", "study": "academic", "lecture": "academic", "teacher": "academic",
+    "work meeting": "work", "friend": "social", "family": "social",
+}
+SHEET_MODELS = {
+    "M1 Count only": "interaction_count",
+    "M2 Time shares only": "social_day_share + academic_day_share + work_day_share",
+    "M3 Calendar only": "weekend_indicator",
+    "M4 Interaction features": "interaction_count + social_day_share + academic_day_share + work_day_share",
+    "M5 Full model": "interaction_count + social_day_share + academic_day_share + work_day_share + weekend_indicator",
+}
+
 
 def load():
     table = build_daily_table()
     logs = pd.read_csv(DATA / "daily_fatigue.csv", parse_dates=["date"])
     table = table.merge(logs[["Name", "date", "total_duration_min"]], on=["Name", "date"])
     table["total_hours"] = table["total_duration_min"] / 60
+    return add_sheet_features(table)
+
+
+def add_sheet_features(table):
+    """Add the spreadsheet's features: day shares, recalculated count, weekend indicator."""
+    interactions = pd.read_csv(DATA / "interactions.csv", parse_dates=["date"])
+    interactions["category"] = interactions["type"].str.strip().str.lower().map(SHEET_CATEGORIES)
+    keys = ["Name", "date"]
+    minutes = interactions.pivot_table(index=keys, columns="category", values="duration_min",
+                                       aggfunc="sum", fill_value=0)
+    shares = (minutes.reindex(columns=["social", "academic", "work"], fill_value=0) / 1440).add_suffix("_day_share")
+    shares["interaction_count"] = interactions.groupby(keys).size()
+    table = table.drop(columns=["interaction_count"]).merge(shares.reset_index(), on=keys, how="left")
+    share_cols = ["social_day_share", "academic_day_share", "work_day_share", "interaction_count"]
+    table[share_cols] = table[share_cols].fillna(0)
+    table["weekend_indicator"] = (table["date"].dt.dayofweek >= 5).astype(int)
     return table
+
+
+def leave_one_out(formula, table):
+    """Predict each day from a model fit on the other days."""
+    return [float(smf.ols(formula, data=table.drop(i)).fit().predict(table.loc[[i]]).iloc[0])
+            for i in table.index]
 
 
 def r2_rmse(actual, predicted):
@@ -132,6 +169,24 @@ def main():
     }
     hours_threshold = (TIRED_AT - v1.params["Intercept"]) / v1.params["total_hours"]
 
+    # Candidate models: the team spreadsheet's M1-M5 and v1, scored on all days and on held-out days.
+    candidates = {}
+    for name, rhs in {**SHEET_MODELS, "v1 Total hours": "total_hours"}.items():
+        formula = f"fatigue_score ~ {rhs}"
+        m = smf.ols(formula, data=t).fit()
+        held_out = leave_one_out(formula, t)
+        candidates[name] = {
+            "features": rhs, "parameters": int(len(m.params)), "residual_df": int(m.df_resid),
+            "r2": float(m.rsquared), "adj_r2": float(m.rsquared_adj), "f_test_p": float(m.f_pvalue),
+            "rmse_all_days": r2_rmse(y, m.fittedvalues)["rmse"],
+            "rmse_leave_one_out": r2_rmse(y, held_out)["rmse"],
+            "worst_leave_one_out_miss": float(np.max(np.abs(y.values - np.array(held_out)))),
+            "coefficients": {k: {"coef": float(m.params[k]), "p_value": float(m.pvalues[k])} for k in m.params.index},
+        }
+    print("Candidate models (spreadsheet M1-M5 and v1):")
+    print(pd.DataFrame({k: {c: v[c] for c in ("r2", "adj_r2", "rmse_all_days", "rmse_leave_one_out")}
+                        for k, v in candidates.items()}).T.round(3).to_string(), "\n")
+
     new_hours = sum(m for _, m in NEW_DAY["interactions"]) / 60
     new_day = {**NEW_DAY, "total_hours": new_hours,
                "predicted_fatigue": predict_fatigue(new_hours),
@@ -150,6 +205,7 @@ def main():
         "r2": float(v1.rsquared), "adj_r2": float(v1.rsquared_adj),
         "average_fatigue": average, "tired_at": TIRED_AT, "tired_days": int((y >= TIRED_AT).sum()),
         "nudge_when_hours_at_least": float(hours_threshold),
+        "candidate_models": candidates,
         "fit": fit, "value_assumptions": VALUE, "users_assumed": USERS,
         "decisions": decisions, "new_day": new_day,
         "per_day": t[["Name", "date", "total_hours", "fatigue_score", "predicted_v1", "nudge_v1"]]
@@ -203,7 +259,24 @@ def main():
          "| Person | Date | Hours of interactions | Fatigue | v1 predicted | v1 decision |", "|---|---|---|---|---|---|"]
     for r in results["per_day"]:
         L.append(f"| {r['Name']} | {r['date']} | {r['total_hours']:.2f} | {r['fatigue_score']} | {r['predicted_v1']:.2f} | {r['nudge_v1']} |")
-    L += ["", "## Model v1", "", f"`{FORMULA}` (OLS)", "",
+    L += ["", "## Choosing v1: the team spreadsheet's models vs total hours", "",
+          "M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; class discussion "
+          "left out of the shares; weekend = Saturday/Sunday). Leave-one-out predicts each day from a model "
+          "fit on the other 7, which shows how a model does on a day it has not seen.", "",
+          "| Model | Features | Residual df | R² | Adjusted R² | Typical error, all days | Typical error, held-out days | Worst held-out miss |",
+          "|---|---|---|---|---|---|---|---|",
+          f"| Baseline | average fatigue | {len(t) - 1} | 0.000 | 0.000 | {fit['baseline_all_days']['rmse']:.2f} | "
+          f"{fit['baseline_leave_one_out']['rmse']:.2f} | {max(abs(a - b) for a, b in zip(y, loo_base)):.1f} |"]
+    for name, m in candidates.items():
+        L.append(f"| {name} | {m['features'].replace(' + ', ', ')} | {m['residual_df']} | {m['r2']:.3f} | {m['adj_r2']:.3f} | "
+                 f"{m['rmse_all_days']:.2f} | {m['rmse_leave_one_out']:.2f} | {m['worst_leave_one_out_miss']:.1f} |")
+    best_sheet = max(SHEET_MODELS, key=lambda k: candidates[k]["adj_r2"])
+    L += ["", f"{best_sheet} has the highest adjusted R² ({candidates[best_sheet]['adj_r2']:.3f}), but with "
+              f"{candidates[best_sheet]['parameters']} numbers fit to {len(t)} days it misses held-out days by "
+              f"{candidates[best_sheet]['rmse_leave_one_out']:.1f} points on average on a 1-10 scale. Every spreadsheet "
+              "model does worse than the baseline on held-out days. Total hours is the only candidate that beats "
+              "the baseline there, so it is v1.", ""]
+    L += ["## Model v1", "", f"`{FORMULA}` (OLS)", "",
           "| Term | Coefficient | p-value |", "|---|---|---|"]
     for k, v in c.items():
         L.append(f"| {k} | {v['coef']:.3f} | {v['p_value']:.3f} |")

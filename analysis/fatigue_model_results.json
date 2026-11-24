@@ -29,6 +29,170 @@
   "tired_at": 7,
   "tired_days": 5,
   "nudge_when_hours_at_least": 4.08455369595537,
+  "candidate_models": {
+    "M1 Count only": {
+      "features": "interaction_count",
+      "parameters": 2,
+      "residual_df": 6,
+      "r2": 0.19978865332540785,
+      "adj_r2": 0.06642009554630912,
+      "f_test_p": 0.2668534045904709,
+      "rmse_all_days": 2.269660887493479,
+      "rmse_leave_one_out": 2.998805299747078,
+      "worst_leave_one_out_miss": 4.819383259911896,
+      "coefficients": {
+        "Intercept": {
+          "coef": 4.972789115646256,
+          "p_value": 0.02780354749470486
+        },
+        "interaction_count": {
+          "coef": 0.37414965986394577,
+          "p_value": 0.2668534045904706
+        }
+      }
+    },
+    "M2 Time shares only": {
+      "features": "social_day_share + academic_day_share + work_day_share",
+      "parameters": 4,
+      "residual_df": 4,
+      "r2": 0.5949632036253698,
+      "adj_r2": 0.29118560634439716,
+      "f_test_p": 0.26226386930463547,
+      "rmse_all_days": 1.6147521099728226,
+      "rmse_leave_one_out": 6.031972224062768,
+      "worst_leave_one_out_miss": 15.447657397332131,
+      "coefficients": {
+        "Intercept": {
+          "coef": 2.930098607352419,
+          "p_value": 0.1800332471299311
+        },
+        "social_day_share": {
+          "coef": 17.798935302007543,
+          "p_value": 0.17616498989460444
+        },
+        "academic_day_share": {
+          "coef": 22.078143557920306,
+          "p_value": 0.14833552442920703
+        },
+        "work_day_share": {
+          "coef": 63.4185659573497,
+          "p_value": 0.1009975669968264
+        }
+      }
+    },
+    "M3 Calendar only": {
+      "features": "weekend_indicator",
+      "parameters": 2,
+      "residual_df": 6,
+      "r2": 0.08737864077669899,
+      "adj_r2": -0.06472491909385125,
+      "f_test_p": 0.47719221667916717,
+      "rmse_all_days": 2.4238399287081647,
+      "rmse_leave_one_out": 3.2317865716108853,
+      "worst_leave_one_out_miss": 5.333333333333332,
+      "coefficients": {
+        "Intercept": {
+          "coef": 7.499999999999997,
+          "p_value": 0.0017290640724799578
+        },
+        "weekend_indicator": {
+          "coef": -1.4999999999999982,
+          "p_value": 0.47719221667916767
+        }
+      }
+    },
+    "M4 Interaction features": {
+      "features": "interaction_count + social_day_share + academic_day_share + work_day_share",
+      "parameters": 5,
+      "residual_df": 3,
+      "r2": 0.5996690367785971,
+      "adj_r2": 0.06589441915005978,
+      "f_test_p": 0.4811371407433417,
+      "rmse_all_days": 1.6053443791715787,
+      "rmse_leave_one_out": 6.460559862543086,
+      "worst_leave_one_out_miss": 15.46709771644024,
+      "coefficients": {
+        "Intercept": {
+          "coef": 3.033327710023043,
+          "p_value": 0.2522147493805244
+        },
+        "interaction_count": {
+          "coef": -0.12389823186314697,
+          "p_value": 0.863026077698793
+        },
+        "social_day_share": {
+          "coef": 18.39589310942501,
+          "p_value": 0.2477087638225974
+        },
+        "academic_day_share": {
+          "coef": 27.025544655892556,
+          "p_value": 0.43293748132340115
+        },
+        "work_day_share": {
+          "coef": 70.21443224717143,
+          "p_value": 0.25377075627760215
+        }
+      }
+    },
+    "M5 Full model": {
+      "features": "interaction_count + social_day_share + academic_day_share + work_day_share + weekend_indicator",
+      "parameters": 6,
+      "residual_df": 2,
+      "r2": 0.976495814930971,
+      "adj_r2": 0.9177353522583986,
+      "f_test_p": 0.05772869484027027,
+      "rmse_all_days": 0.3889835361321525,
+      "rmse_leave_one_out": 39.311440564303886,
+      "worst_leave_one_out_miss": 111.03114959876928,
+      "coefficients": {
+        "Intercept": {
+          "coef": 5.414538442689083,
+          "p_value": 0.01927935086001539
+        },
+        "interaction_count": {
+          "coef": -0.7464968661873007,
+          "p_value": 0.07980592161107834
+        },
+        "social_day_share": {
+          "coef": 36.1834422796945,
+          "p_value": 0.018140859219114423
+        },
+        "academic_day_share": {
+          "coef": 41.98618702221492,
+          "p_value": 0.04538755192534844
+        },
+        "work_day_share": {
+          "coef": 110.1927883860732,
+          "p_value": 0.021423983500257288
+        },
+        "weekend_indicator": {
+          "coef": -4.71078525319275,
+          "p_value": 0.02979996082608038
+        }
+      }
+    },
+    "v1 Total hours": {
+      "features": "total_hours",
+      "parameters": 2,
+      "residual_df": 6,
+      "r2": 0.35033026881489593,
+      "adj_r2": 0.24205198028404518,
+      "f_test_p": 0.12216558232711987,
+      "rmse_all_days": 2.0450547411998796,
+      "rmse_leave_one_out": 2.5645528891773077,
+      "worst_leave_one_out_miss": 4.289428076256502,
+      "coefficients": {
+        "Intercept": {
+          "coef": 4.039924194567277,
+          "p_value": 0.05742083683930536
+        },
+        "total_hours": {
+          "coef": 0.7246999368288061,
+          "p_value": 0.12216558232711974
+        }
+      }
+    }
+  },
   "fit": {
     "baseline_all_days": {
       "r2": 0.0,
