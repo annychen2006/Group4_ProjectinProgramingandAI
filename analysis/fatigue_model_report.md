@@ -43,13 +43,15 @@ R² 0.350, adjusted R² 0.242. Each extra hour of interactions adds 0.72 fatigue
 
 Rule: nudge if predicted fatigue >= 7, else stay quiet (`should_nudge`). 5 of 8 logged days were tired days.
 
-Value per user-day (ASSUMED): {'hit': 0.5, 'false_alarm': -0.2, 'miss': -0.5, 'quiet_ok': 0.0}. Per year: x 1,000 users (ASSUMED) x 365 days.
+Value per user-day (ASSUMED): nudge on a tired day $0.50, nudge on a fine day -$0.20, no nudge on a tired day -$0.50, no nudge on a fine day $0.00. Per year = per user-day x 1,000 users (ASSUMED) x 365 days.
 
 | Rule | Nudges | Tired days caught | False alarms | Tired days missed | Value, 8 days | Per user-day | Per year |
 |---|---|---|---|---|---|---|---|
 | Baseline | 0 | 0 | 0 | 5 | -$2.50 | -$0.31 | -$114,062 |
 | v1 | 3 | 2 | 1 | 3 | -$0.70 | -$0.09 | -$31,938 |
 | v1, leave-one-out | 3 | 2 | 1 | 3 | -$0.70 | -$0.09 | -$31,938 |
+
+The leave-one-out row predicts each day from a model fit on the other 7. It makes the same nudge decision as v1 on every day, so the value is the same.
 
 ## New input
 

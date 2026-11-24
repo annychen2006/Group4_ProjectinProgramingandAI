@@ -220,14 +220,20 @@ def main():
           "## Decision and value", "",
           f"Rule: nudge if predicted fatigue >= {TIRED_AT}, else stay quiet (`should_nudge`). "
           f"{results['tired_days']} of {len(t)} logged days were tired days.", "",
-          f"Value per user-day (ASSUMED): {VALUE}. Per year: x {USERS:,} users (ASSUMED) x {DAYS_PER_YEAR} days.", "",
+          f"Value per user-day (ASSUMED): nudge on a tired day {usd(VALUE['hit'])}, nudge on a fine day "
+          f"{usd(VALUE['false_alarm'])}, no nudge on a tired day {usd(VALUE['miss'])}, no nudge on a fine day "
+          f"{usd(VALUE['quiet_ok'])}. Per year = per user-day x {USERS:,} users (ASSUMED) x {DAYS_PER_YEAR} days.", "",
           "| Rule | Nudges | Tired days caught | False alarms | Tired days missed | Value, 8 days | Per user-day | Per year |",
           "|---|---|---|---|---|---|---|---|"]
     for label, key in [("Baseline", "baseline"), ("v1", "v1"), ("v1, leave-one-out", "v1_leave_one_out")]:
         d = decisions[key]
         L.append(f"| {label} | {d['nudges']} | {d['hit']} | {d['false_alarm']} | {d['miss']} | {usd(d['value_total'])} | "
                  f"{usd(d['value_per_user_day'])} | {usd0(d['value_per_year'])} |")
-    L += ["", "## New input", "",
+    same = all((a >= TIRED_AT) == (b >= TIRED_AT) for a, b in zip(fitted, loo_v1))
+    L += ["", "The leave-one-out row predicts each day from a model fit on the other 7. "
+          + ("It makes the same nudge decision as v1 on every day, so the value is the same."
+             if same else "Its nudge decisions differ from v1 on some days."), ""]
+    L += ["## New input", "",
           f"{NEW_DAY['description']} = {new_hours:.1f} hours. v1 predicts fatigue {new_day['predicted_fatigue']:.2f}: "
           f"**{new_day['decision_v1']}**. Baseline: {new_day['decision_baseline']}.", ""]
     (HERE / "fatigue_model_report.md").write_text("\n".join(L))
