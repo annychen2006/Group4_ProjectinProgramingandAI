@@ -1,0 +1,180 @@
+{
+  "rows": 8,
+  "people": [
+    "Anny",
+    "Bianca",
+    "Taeyun",
+    "Zaid"
+  ],
+  "period": [
+    "2026-10-14",
+    "2026-10-19"
+  ],
+  "interactions_logged": 38,
+  "split": "none: 8 rows < 30, v1 fit on all rows (leave-one-out used as a held-out check)",
+  "formula": "fatigue_score ~ total_hours",
+  "coefficients": {
+    "Intercept": {
+      "coef": 4.039924194567277,
+      "p_value": 0.05742083683930536
+    },
+    "total_hours": {
+      "coef": 0.7246999368288061,
+      "p_value": 0.12216558232711974
+    }
+  },
+  "r2": 0.35033026881489593,
+  "adj_r2": 0.24205198028404518,
+  "average_fatigue": 6.75,
+  "tired_at": 7,
+  "tired_days": 5,
+  "nudge_when_hours_at_least": 4.08455369595537,
+  "fit": {
+    "baseline_all_days": {
+      "r2": 0.0,
+      "rmse": 2.537222891273055
+    },
+    "v1_all_days": {
+      "r2": 0.35033026881489604,
+      "rmse": 2.0450547411998796
+    },
+    "baseline_leave_one_out": {
+      "r2": -0.30612244897959173,
+      "rmse": 2.8996833043120627
+    },
+    "v1_leave_one_out": {
+      "r2": -0.021659265458279897,
+      "rmse": 2.5645528891773077
+    }
+  },
+  "value_assumptions": {
+    "hit": 0.5,
+    "false_alarm": -0.2,
+    "miss": -0.5,
+    "quiet_ok": 0.0
+  },
+  "users_assumed": 1000,
+  "decisions": {
+    "baseline": {
+      "hit": 0,
+      "false_alarm": 0,
+      "miss": 5,
+      "quiet_ok": 3,
+      "nudges": 0,
+      "value_total": -2.5,
+      "value_per_user_day": -0.3125,
+      "value_per_year": -114062.5
+    },
+    "v1": {
+      "hit": 2,
+      "false_alarm": 1,
+      "miss": 3,
+      "quiet_ok": 2,
+      "nudges": 3,
+      "value_total": -0.7,
+      "value_per_user_day": -0.0875,
+      "value_per_year": -31937.5
+    },
+    "v1_leave_one_out": {
+      "hit": 2,
+      "false_alarm": 1,
+      "miss": 3,
+      "quiet_ok": 2,
+      "nudges": 3,
+      "value_total": -0.7,
+      "value_per_user_day": -0.0875,
+      "value_per_year": -31937.5
+    }
+  },
+  "new_day": {
+    "description": "weekday: 2 h lecture, 1.5 h study, 1 h group work, 1.5 h with friends",
+    "interactions": [
+      [
+        "lecture",
+        120
+      ],
+      [
+        "study",
+        90
+      ],
+      [
+        "group work",
+        60
+      ],
+      [
+        "friend",
+        90
+      ]
+    ],
+    "total_hours": 6.0,
+    "predicted_fatigue": 8.388123815540114,
+    "decision_v1": "nudge",
+    "decision_baseline": "stay quiet"
+  },
+  "per_day": [
+    {
+      "Name": "Taeyun",
+      "date": "2026-10-14",
+      "total_hours": 2.5,
+      "fatigue_score": 8,
+      "predicted_v1": 5.85,
+      "nudge_v1": "stay quiet"
+    },
+    {
+      "Name": "Anny",
+      "date": "2026-10-17",
+      "total_hours": 4.67,
+      "fatigue_score": 5,
+      "predicted_v1": 7.42,
+      "nudge_v1": "nudge"
+    },
+    {
+      "Name": "Taeyun",
+      "date": "2026-10-18",
+      "total_hours": 6.5,
+      "fatigue_score": 9,
+      "predicted_v1": 8.75,
+      "nudge_v1": "nudge"
+    },
+    {
+      "Name": "Anny",
+      "date": "2026-10-18",
+      "total_hours": 1.5,
+      "fatigue_score": 2,
+      "predicted_v1": 5.13,
+      "nudge_v1": "stay quiet"
+    },
+    {
+      "Name": "Bianca",
+      "date": "2026-10-18",
+      "total_hours": 3.25,
+      "fatigue_score": 8,
+      "predicted_v1": 6.4,
+      "nudge_v1": "stay quiet"
+    },
+    {
+      "Name": "Zaid",
+      "date": "2026-10-19",
+      "total_hours": 7.33,
+      "fatigue_score": 9,
+      "predicted_v1": 9.35,
+      "nudge_v1": "nudge"
+    },
+    {
+      "Name": "Anny",
+      "date": "2026-10-19",
+      "total_hours": 1.5,
+      "fatigue_score": 4,
+      "predicted_v1": 5.13,
+      "nudge_v1": "stay quiet"
+    },
+    {
+      "Name": "Bianca",
+      "date": "2026-10-19",
+      "total_hours": 2.67,
+      "fatigue_score": 9,
+      "predicted_v1": 5.97,
+      "nudge_v1": "stay quiet"
+    }
+  ]
+}

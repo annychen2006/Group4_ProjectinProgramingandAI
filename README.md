@@ -20,3 +20,9 @@ Do not commit `.env` or paste the database URL into source code. The app expects
 Add this GitHub repository as a new service **inside the Railway project that already contains Postgres**. In the app service's Variables, set `DATABASE_URL` to `${{Postgres.DATABASE_URL}}` (use the database service's actual name if different). Railway will build the Dockerfile. In the app service's networking settings, generate a public domain and open that domain to verify the page.
 
 The app service's public URL is the assignment deliverable; the Postgres public URL is a database connection string and should not be submitted.
+
+## Group model v1: should the app tell this user to recharge?
+
+`analysis/fatigue_model.py` is the team's first model. It loads our logs (`data/interactions.csv`, `data/daily_fatigue.csv`; 8 person-days logged 14–19 October 2026) and fits a linear regression of `fatigue_score` on hours of interactions that day. With fewer than 30 rows there is no 70/30 split, so v1 is fit on all 8 days, with leave-one-out as a check on new days. It compares v1 with the baseline (the average fatigue, so the app never nudges) and values both under assumed dollar figures. `should_nudge` returns the decision for a new day.
+
+Run `pip install -r analysis/requirements.txt`, then `python analysis/fatigue_model.py`. It writes `analysis/fatigue_model_report.md` (every number), `analysis/fatigue_model_results.json` and `analysis/fatigue_model_chart.png`. The dollar values and user count are assumptions, set at the top of the script.
