@@ -17,6 +17,22 @@
 | Anny | 2026-10-19 | 1.50 | 4 | 5.13 | stay quiet |
 | Bianca | 2026-10-19 | 2.67 | 9 | 5.97 | stay quiet |
 
+### Data dictionary (`fatigue_model_data.csv`)
+
+| Column | Meaning |
+|---|---|
+| `Name` | who logged the day |
+| `date` | the day (YYYY-MM-DD) |
+| `fatigue_score` | OUTCOME: self-rated fatigue that day, 1 = fully charged, 10 = drained |
+| `total_hours` | hours of logged interactions that day (v1's feature) |
+| `interaction_count` | number of interactions logged that day |
+| `social_day_share` | friend + family minutes / 1,440 |
+| `academic_day_share` | lecture + study + group work + teacher minutes / 1,440 |
+| `work_day_share` | work meeting minutes / 1,440 |
+| `weekend_indicator` | 1 = Saturday or Sunday, 0 = weekday |
+| `predicted_v1` | v1's predicted fatigue |
+| `nudge_v1` | v1's decision: nudge if predicted fatigue >= 7 |
+
 ## Choosing v1: the team spreadsheet's models vs total hours
 
 M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; class discussion left out of the shares; weekend = Saturday/Sunday). Leave-one-out predicts each day from a model fit on the other 7, which shows how a model does on a day it has not seen.
@@ -32,6 +48,8 @@ M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; cl
 | v1 Total hours | total_hours | 6 | 0.350 | 0.242 | 2.05 | 2.56 | 4.3 |
 
 M5 Full model has the highest adjusted R² (0.918), but with 6 numbers fit to 8 days it misses held-out days by 39.3 points on average on a 1-10 scale. Every spreadsheet model does worse than the baseline on held-out days. Total hours is the only candidate that beats the baseline there, so it is v1.
+
+![model comparison](fatigue_model_comparison.png)
 
 ## Model v1
 

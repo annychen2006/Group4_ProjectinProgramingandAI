@@ -246,6 +246,59 @@ def main():
     fig.tight_layout()
     fig.savefig(HERE / "fatigue_model_chart.png", dpi=200, facecolor="white")
 
+    # Data file: the 8-row modelling table, one row per person per day.
+    data_cols = {
+        "Name": "who logged the day",
+        "date": "the day (YYYY-MM-DD)",
+        "fatigue_score": "OUTCOME: self-rated fatigue that day, 1 = fully charged, 10 = drained",
+        "total_hours": "hours of logged interactions that day (v1's feature)",
+        "interaction_count": "number of interactions logged that day",
+        "social_day_share": "friend + family minutes / 1,440",
+        "academic_day_share": "lecture + study + group work + teacher minutes / 1,440",
+        "work_day_share": "work meeting minutes / 1,440",
+        "weekend_indicator": "1 = Saturday or Sunday, 0 = weekday",
+        "predicted_v1": "v1's predicted fatigue",
+        "nudge_v1": "v1's decision: nudge if predicted fatigue >= 7",
+    }
+    t.assign(date=t["date"].dt.strftime("%Y-%m-%d"))[list(data_cols)].round(4).to_csv(
+        HERE / "fatigue_model_data.csv", index=False)
+
+    # Chart 2: typical error on all days vs on held-out days, per model.
+    names = ["Baseline"] + list(candidates)
+    in_sample = [fit["baseline_all_days"]["rmse"]] + [candidates[k]["rmse_all_days"] for k in candidates]
+    held_out = [fit["baseline_leave_one_out"]["rmse"]] + [candidates[k]["rmse_leave_one_out"] for k in candidates]
+    cap = 8
+    fig, ax = plt.subplots(figsize=(9, 5))
+    rows = np.arange(len(names))[::-1]
+    h = 0.36
+    ax.barh(rows + h / 2, in_sample, height=h - 0.04, color=mark, label="all 8 days (the fit itself)")
+    ax.barh(rows - h / 2, [min(v, cap) for v in held_out], height=h - 0.04, color=accent,
+            label="held-out days (predicted from the other 7)")
+    label_bg = {"facecolor": "white", "edgecolor": "none", "pad": 1}  # keeps the dashed line off the numbers
+    for r, a, b in zip(rows, in_sample, held_out):
+        ax.text(a + 0.08, r + h / 2, f"{a:.1f}", va="center", fontsize=8.5, color=muted, bbox=label_bg)
+        ax.text(min(b, cap) + 0.08, r - h / 2, f"{b:.1f}" + ("  (off scale)" if b > cap else ""),
+                va="center", fontsize=8.5, color=ink if b > cap else muted, weight="bold" if b > cap else "normal",
+                bbox=label_bg)
+    ax.axvline(fit["baseline_leave_one_out"]["rmse"], color=muted, lw=1.2, ls="--", zorder=0)
+    ax.text(fit["baseline_leave_one_out"]["rmse"] + 0.08, len(names) - 0.35, "baseline on held-out days",
+            fontsize=8.5, color=muted, va="bottom")
+    ax.set_yticks(rows)
+    ax.set_yticklabels([n.replace("v1 Total hours", "v1: total hours") for n in names], color=ink, fontsize=9.5)
+    ax.set_xlim(0, cap + 2.2)
+    ax.set_ylim(-0.7, len(names) - 0.1)
+    ax.set_xlabel("Typical error in fatigue points (RMSE, lower is better)", color=muted)
+    ax.set_title("Fits the 8 days vs predicts a new day", loc="left", color=ink, fontsize=12)
+    ax.legend(loc="lower right", frameon=False, fontsize=9)
+    ax.grid(axis="x", color=grid, lw=0.8)
+    ax.set_axisbelow(True)
+    for side in ("top", "right", "left"):
+        ax.spines[side].set_visible(False)
+    ax.spines["bottom"].set_color(grid)
+    ax.tick_params(colors=muted, left=False)
+    fig.tight_layout()
+    fig.savefig(HERE / "fatigue_model_comparison.png", dpi=200, facecolor="white")
+
     # Report.
     usd = lambda v: f"-${abs(v):,.2f}" if v < 0 else f"${v:,.2f}"
     usd0 = lambda v: f"-${abs(v):,.0f}" if v < 0 else f"${v:,.0f}"
@@ -259,6 +312,8 @@ def main():
          "| Person | Date | Hours of interactions | Fatigue | v1 predicted | v1 decision |", "|---|---|---|---|---|---|"]
     for r in results["per_day"]:
         L.append(f"| {r['Name']} | {r['date']} | {r['total_hours']:.2f} | {r['fatigue_score']} | {r['predicted_v1']:.2f} | {r['nudge_v1']} |")
+    L += ["", "### Data dictionary (`fatigue_model_data.csv`)", "", "| Column | Meaning |", "|---|---|"]
+    L += [f"| `{k}` | {v} |" for k, v in data_cols.items()]
     L += ["", "## Choosing v1: the team spreadsheet's models vs total hours", "",
           "M1-M5 reproduce `daily_fatigue_regression.xlsx` (day share = minutes / 1,440; class discussion "
           "left out of the shares; weekend = Saturday/Sunday). Leave-one-out predicts each day from a model "
@@ -275,7 +330,8 @@ def main():
               f"{candidates[best_sheet]['parameters']} numbers fit to {len(t)} days it misses held-out days by "
               f"{candidates[best_sheet]['rmse_leave_one_out']:.1f} points on average on a 1-10 scale. Every spreadsheet "
               "model does worse than the baseline on held-out days. Total hours is the only candidate that beats "
-              "the baseline there, so it is v1.", ""]
+              "the baseline there, so it is v1.", "",
+          "![model comparison](fatigue_model_comparison.png)", ""]
     L += ["## Model v1", "", f"`{FORMULA}` (OLS)", "",
           "| Term | Coefficient | p-value |", "|---|---|---|"]
     for k, v in c.items():

@@ -1,0 +1,9 @@
+Name,date,fatigue_score,total_hours,interaction_count,social_day_share,academic_day_share,work_day_share,weekend_indicator,predicted_v1,nudge_v1
+Taeyun,2026-10-14,8,2.5,3,0.0,0.1042,0.0,0,5.8517,stay quiet
+Anny,2026-10-17,5,4.6667,4,0.0694,0.125,0.0,1,7.4219,nudge
+Taeyun,2026-10-18,9,6.5,2,0.2708,0.0,0.0,1,8.7505,nudge
+Anny,2026-10-18,2,1.5,2,0.0625,0.0,0.0,1,5.127,stay quiet
+Bianca,2026-10-18,8,3.25,5,0.0521,0.0,0.0833,1,6.3952,stay quiet
+Zaid,2026-10-19,9,7.3333,12,0.0799,0.2257,0.0,0,9.3544,nudge
+Anny,2026-10-19,4,1.5,4,0.0139,0.0417,0.0,0,5.127,stay quiet
+Bianca,2026-10-19,9,2.6667,6,0.0069,0.0208,0.0625,0,5.9725,stay quiet
